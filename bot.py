@@ -49,8 +49,8 @@ def barrel(message):
     user_photo = bot.get_user_profile_photos(uid,0,1) # getting user profile photo
     fid = user_photo.photos[0][0].file_id # getting user profile photo id
     if db_worker.check_user(uid): # if user exists
-        if db_worker.check_barrel(uid): # if barrel_roll-gif already exists
-            bar_id = db_worker.get_barrel(uid) # getting its file id
+        if db_worker.check_barrel(uid): # if barrel_roll-gif already exists and uploaded
+            bar_id = db_worker.get_barrel(uid) # getting file id
             bot.send_document(cid,bar_id) # sending barrel_roll-gif
         else:
             file_path = bot.get_file(fid).file_path # getting file_path of users profile image
@@ -83,6 +83,22 @@ def game(message):
         utils.set_user_game(cid, row[2])
     db_worker.close()
 
+@bot.message_handler(content_types=['text'])
+def petros(message):
+    """
+    Send random aneqdotue from nech.txt file
+    :param message: shoud consists string "petros"
+    :return:
+    """
+    cid = message.chat.id
+    tmp = message.text.find('петро')
+    if message.text.find('петро')|message.text.find('Петро'):
+        with open("petros\\nech.txt","r") as f:
+            anech = f.read().split('\n\n')
+            bot.send_message(cid, anech[random.randint(2,len(anech))])
+    else:
+        pass
+
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def check_answer(message):
     cid = message.chat.id
@@ -97,6 +113,7 @@ def check_answer(message):
         else:
             bot.send_message(cid, 'Увы, Вы не угадали. Попробуйте ещё раз!', reply_markup=keyboard_hider, reply_to_message_id=message.message_id)
         utils.finish_user_game(cid)
+
 
 
 
